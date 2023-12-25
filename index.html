@@ -10,38 +10,57 @@
     <div class="bg-indigo-900 min-h-screen p-10">
       <div class="bg-white rounded p-5 max-w-xl mx-auto">
         <h4 class="font-semibold text-xl">Request a Courier Pickup</h4>
-        <div class="my-5 space-y-5">
-          <div class="flex space-x-5">
-            <input type="text" class="form-input" placeholder="Name" />
+        <form class="my-5 space-y-5" method="post" id="courier-request-form">
+          <div class="grid grid-cols-2 gap-x-5">
             <input
-              type="number"
-              min="0"
+              type="text"
+              name="name"
+              id="name"
               class="form-input"
-              placeholder="Phone"
+              placeholder="Name"
+              required
+            />
+            <input
+              type="text"
+              id="mobile"
+              name="mobile"
+              class="form-input"
+              placeholder="Mobile Number"
+              required
             />
           </div>
-          <input
-            type="datetime-local"
-            class="form-input"
-            placeholder="Pickup Date"
-          />
-          <textarea
-            name="pickup-area"
-            id="pickup-area"
-            cols="30"
-            rows="3"
-            placeholder="Enter Pickup Address"
-            class="form-input"
-          ></textarea>
+          <div>
+            <input
+              type="datetime-local"
+              name="pickup-date"
+              id="pickup-date"
+              class="form-input"
+              placeholder="Pickup Date"
+              required
+            />
+          </div>
+
+          <div>
+            <textarea
+              name="pickup-area"
+              id="pickup-area"
+              cols="30"
+              rows="3"
+              placeholder="Enter Pickup Address"
+              class="form-input"
+              required
+            ></textarea>
+          </div>
+
           <button
             type="submit"
             class="px-3 py-1 bg-indigo-500 text-white font-semibold w-full hover:bg-indigo-600"
           >
             Create Pickup
           </button>
-        </div>
+        </form>
       </div>
-      <div class="bg-white rounded p-5 max-w-xl mx-auto mt-10">
+      <div class="bg-white rounded p-5 max-w-xl mx-auto mt-10 hidden">
         <h4 class="font-semibold text-xl">Courier Request</h4>
         <div class="my-5 space-y-5">
           <table class="table table-fixed border w-full">
@@ -68,5 +87,6 @@
         </div>
       </div>
     </div>
+    <script type="module" src="./assets/js/main.js"></script>
   </body>
 </html>
