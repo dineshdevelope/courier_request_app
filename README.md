@@ -16,8 +16,8 @@ Simple courier pickuping app made on vanilla javascript.
 ### TODOs:
 
 - [x] Form validation
-- [ ] Save it to LocalStorage (Storage Options)
-- [ ] Show Courier request based on state
+- [x] Save it to LocalStorage (Storage Options)
+- [x] Show Courier request based on state
 - [ ] Other CRUD Operations
 
 ## Validation rules

@@ -111,34 +111,49 @@ function getAllCourierDatas() {
   //console.log(courierDataArr);
 
   if (courierDataArr) {
+    const courierCardEl = document.getElementById("courierCard");
+    courierCardEl.classList.remove("hidden");
+
     //write those value in UI
     const tableEl = document.getElementById("courierDataTable");
 
-    const finalData = courierDataArr
-      .map((courierData) => {
-        const newTrTemplate = `
+    const newFinalValue = [];
 
-  <tr>
-  <td class="px-2 py-1 border">${courierData.name}</td>
-  <td class="px-2 py-1 border">${courierData.mobile}</td>
-  <td class="px-2 py-1 border">${courierData["pickup-date"]}</td>
-   <td class="px-2 py-1 border">${courierData["pickup-area"]}</td>
-  <td class="px-2 py-1 border">
-                <button
-                  type="button"
-                  class="px-2 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-sm"
-                >
-                  Delete
-                </button>
-              </td>
-  </tr>
-  `;
+    courierDataArr.map((courierData) => {
+      const trE1 = document.createElement("tr");
+      const tdE1 = document.createElement("td");
+      const tdE2 = document.createElement("td");
+      const tdE3 = document.createElement("td");
+      const tdE4 = document.createElement("td");
+      const tdE5 = document.createElement("td");
+      const deleteBtnEl = document.createElement("button");
 
-        return newTrTemplate;
-      })
-      .join(" ");
+      tdE1.classList.add("px-2", "py-1", "border");
+      tdE1.textContent = courierData.name;
 
-    tableEl.innerHTML += finalData;
+      tdE2.classList.add("px-2", "py-1", "border");
+      tdE2.textContent = courierData.mobile;
+
+      tdE3.classList.add("px-2", "py-1", "border");
+      tdE3.textContent = courierData["pickup-date"];
+
+      tdE4.classList.add("px-2", "py-1", "border");
+      tdE4.textContent = courierData["pickup-area"];
+
+      deleteBtnEl.className =
+        "px-2 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-sm";
+
+      deleteBtnEl.textContent = "Delete";
+
+      tdE5.classList.add("px-2", "py-1", "border");
+      tdE5.append(deleteBtnEl);
+
+      trE1.append(tdE1, tdE2, tdE3, tdE4, tdE5);
+
+      newFinalValue.push(trE1);
+    });
+
+    newFinalValue.forEach((el) => tableEl.append(el));
   } else {
     console.log("No Value Available on localStorage");
   }
