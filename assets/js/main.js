@@ -1,4 +1,5 @@
 import JustValidate from "just-validate";
+import { formatMyDate } from "./utils";
 
 const formEl = document.getElementById("courier-request-form");
 //console.log(formEl);
@@ -135,7 +136,7 @@ function getAllCourierDatas() {
       tdE2.textContent = courierData.mobile;
 
       tdE3.classList.add("px-2", "py-1", "border");
-      tdE3.textContent = courierData["pickup-date"];
+      tdE3.textContent = formatMyDate(courierData["pickup-date"]);
 
       tdE4.classList.add("px-2", "py-1", "border");
       tdE4.textContent = courierData["pickup-area"];
