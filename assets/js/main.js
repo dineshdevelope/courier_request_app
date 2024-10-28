@@ -2,7 +2,7 @@ import JustValidate from "just-validate";
 import { formatMyDate } from "./utils";
 
 const formEl = document.getElementById("courier-request-form");
-//console.log(formEl);
+const localStorageKey = "courierData"; // Key name for getting and setting localStorage
 
 const validateForm = new JustValidate(formEl, {
   validateBeforeSubmitting: true,
@@ -11,153 +11,104 @@ const validateForm = new JustValidate(formEl, {
 validateForm.addField(
   "#name",
   [
-    {
-      rule: "required",
-    },
-    {
-      rule: "minLength",
-      value: 3,
-    },
-    {
-      rule: "maxLength",
-      value: 20,
-    },
+    { rule: "required" },
+    { rule: "minLength", value: 3 },
+    { rule: "maxLength", value: 20 },
   ],
-  {
-    errorLabelCssClass: ["form-error"],
-  }
+  { errorLabelCssClass: ["form-error"] }
 );
 
 validateForm.addField(
   "#mobile",
   [
-    {
-      rule: "required",
-    },
-    {
-      rule: "number",
-    },
-    {
-      rule: "maxLength",
-      value: 10,
-    },
-    {
-      rule: "minLength",
-      value: 10,
-    },
+    { rule: "required" },
+    { rule: "number" },
+    { rule: "maxLength", value: 10 },
+    { rule: "minLength", value: 10 },
   ],
-  {
-    errorLabelCssClass: ["form-error"],
-  }
+  { errorLabelCssClass: ["form-error"] }
 );
 
-validateForm.addField(
-  "#pickup-date",
-  [
-    {
-      rule: "required",
-    },
-  ],
-  {
-    errorLabelCssClass: ["form-error"],
-  }
-);
+validateForm.addField("#pickup-date", [{ rule: "required" }], {
+  errorLabelCssClass: ["form-error"],
+});
 
-validateForm.addField(
-  "#pickup-area",
-  [
-    {
-      rule: "required",
-    },
-  ],
-  {
-    errorLabelCssClass: ["form-error"],
-  }
-);
+validateForm.addField("#pickup-area", [{ rule: "required" }], {
+  errorLabelCssClass: ["form-error"],
+});
 
-const localStorageKey = "courierData"; //keyName For Getting And Setting localStorage
-
-//console.log(validateForm);
 validateForm.onSuccess(() => {
   const formData = new FormData(formEl);
-
   const formObj = Object.fromEntries(formData.entries());
-  //console.log(formObj);
+  formObj.id = Date.now(); // Assign a unique ID based on timestamp
 
-  const newCourierData = [];
+  const existingCourierData =
+    JSON.parse(localStorage.getItem(localStorageKey)) || [];
+  existingCourierData.push(formObj);
 
-  //Get my existing LocalStorage Value
-  const existingCourierData = localStorage.getItem(localStorageKey); //get Local Storage
-  const existingCourierArray = JSON.parse(existingCourierData); //string to javascript
-
-  if (existingCourierArray) {
-    existingCourierArray.push(formObj);
-    //console.log(existingCourierArray);
-
-    //LocalStorage
-    localStorage.setItem(localStorageKey, JSON.stringify(existingCourierArray));
-  } else {
-    newCourierData.push(formObj);
-    localStorage.setItem(localStorageKey, JSON.stringify(newCourierData));
-  }
-  alert("Courier Request Submitted Successfully...!");
+  localStorage.setItem(localStorageKey, JSON.stringify(existingCourierData));
+  alert("Courier Request Submitted Successfully!");
   formEl.reset();
+  getAllCourierDatas(); // Refresh the UI with the new data
 });
 
 function getAllCourierDatas() {
-  // Get All Stored Courier datas which are available in localStorage
   const courierData = localStorage.getItem(localStorageKey);
-
   const courierDataArr = JSON.parse(courierData);
-  //console.log(courierDataArr);
 
-  if (courierDataArr) {
-    const courierCardEl = document.getElementById("courierCard");
+  const courierCardEl = document.getElementById("courierCard");
+  const tableEl = document.getElementById("courierDataTable");
+
+  tableEl.innerHTML = ""; // Clear table to avoid duplicates
+
+  if (courierDataArr && courierDataArr.length > 0) {
     courierCardEl.classList.remove("hidden");
 
-    //write those value in UI
-    const tableEl = document.getElementById("courierDataTable");
+    courierDataArr.forEach((courierData) => {
+      const trEl = document.createElement("tr");
 
-    const newFinalValue = [];
+      const tdName = document.createElement("td");
+      tdName.classList.add("px-2", "py-1", "border");
+      tdName.textContent = courierData.name;
 
-    courierDataArr.map((courierData) => {
-      const trE1 = document.createElement("tr");
-      const tdE1 = document.createElement("td");
-      const tdE2 = document.createElement("td");
-      const tdE3 = document.createElement("td");
-      const tdE4 = document.createElement("td");
-      const tdE5 = document.createElement("td");
-      const deleteBtnEl = document.createElement("button");
+      const tdMobile = document.createElement("td");
+      tdMobile.classList.add("px-2", "py-1", "border");
+      tdMobile.textContent = courierData.mobile;
 
-      tdE1.classList.add("px-2", "py-1", "border");
-      tdE1.textContent = courierData.name;
+      const tdDate = document.createElement("td");
+      tdDate.classList.add("px-2", "py-1", "border");
+      tdDate.textContent = formatMyDate(courierData["pickup-date"]);
 
-      tdE2.classList.add("px-2", "py-1", "border");
-      tdE2.textContent = courierData.mobile;
+      const tdArea = document.createElement("td");
+      tdArea.classList.add("px-2", "py-1", "border");
+      tdArea.textContent = courierData["pickup-area"];
 
-      tdE3.classList.add("px-2", "py-1", "border");
-      tdE3.textContent = formatMyDate(courierData["pickup-date"]);
-
-      tdE4.classList.add("px-2", "py-1", "border");
-      tdE4.textContent = courierData["pickup-area"];
-
-      deleteBtnEl.className =
+      const tdDelete = document.createElement("td");
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className =
         "px-2 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-sm";
+      deleteBtn.textContent = "Delete";
 
-      deleteBtnEl.textContent = "Delete";
+      deleteBtn.onclick = () => deleteCourierData(courierData.id); // Bind delete function
+      tdDelete.classList.add("px-2", "py-1", "border");
+      tdDelete.append(deleteBtn);
 
-      tdE5.classList.add("px-2", "py-1", "border");
-      tdE5.append(deleteBtnEl);
-
-      trE1.append(tdE1, tdE2, tdE3, tdE4, tdE5);
-
-      newFinalValue.push(trE1);
+      trEl.append(tdName, tdMobile, tdDate, tdArea, tdDelete);
+      tableEl.append(trEl);
     });
-
-    newFinalValue.forEach((el) => tableEl.append(el));
   } else {
-    console.log("No Value Available on localStorage");
+    courierCardEl.classList.add("hidden");
+    console.log("No data available in localStorage");
   }
+}
+
+function deleteCourierData(id) {
+  const courierDataArr = JSON.parse(localStorage.getItem(localStorageKey));
+  const updatedCourierDataArr = courierDataArr.filter((data) => data.id !== id);
+
+  localStorage.setItem(localStorageKey, JSON.stringify(updatedCourierDataArr));
+  alert("Courier Request Deleted Successfully!");
+  getAllCourierDatas(); // Refresh the UI with the updated data
 }
 
 getAllCourierDatas();
